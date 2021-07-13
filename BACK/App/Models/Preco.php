@@ -4,28 +4,28 @@ use App\Core\Model;
 
 class Preco{
 
-        public $id;
-        public $primeiraHora;
-        public $demaisHoras;
+    public $id;
+    public $primeiraHora;
+    public $demaisHoras;
        
-        public function getUltimoInserido(){
-            $sql = " SELEC * FROM preco ORDER BY id DESC LIMIT 1 ";
+    public function getUltimoInserido(){
+        $sql = " SELEC * FROM preco ORDER BY id DESC LIMIT 1 ";
 
-            $stmt = Model::getConn()->prepare($sql);
-            $stmt->execute();
+        $stmt = Model::getConn()->prepare($sql);
+        $stmt->execute();
 
-            if ($stmt->rowCount() > 0) {
-                $resultado = $stmt->fetch(PDO::FETCH_OBJ);
+        if ($stmt->rowCount() > 0) {
+            $resultado = $stmt->fetch(PDO::FETCH_OBJ);
 
-                return $resultado;
-            }else {
-                return null;
-            }
-
+            return $resultado;
+        }else {
+            return null;
         }
-    }
 
-    public function inserir(){
+    }
+    
+
+    public function inserir() {
         
         $sql = " INSERT INTO preco (primeira_hora, demais_horas) VALUES (?, ?) ";
         
@@ -41,4 +41,28 @@ class Preco{
             return null;
         }
     }
+
+    public function buscarPorId($id){
+        $sql = " SELECT * FROM preco WHERE id = ? ";
+        $stmt = Model::getConn()->prepare($sql);
+        $stmt->bindValue(1, $id);
+
+        if ($stmt->execute()){
+            $preco = $stmt->fetch(PDO::FETCH_OBJ);
+
+            if (!$preco) {
+                return null;
+            }
+
+            $this->id = $preco->id;
+            $this->primeiraHora = $preco->primeira_hora;
+            $this->demaisHoras = $preco->demais_horas;
+
+            return $this;
+        }else {
+            return null;
+        }
+    }
+
+}
 
